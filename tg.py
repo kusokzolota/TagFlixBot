@@ -1,5 +1,7 @@
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from flask import Flask, request
+from threading import Thread
 
 # Установите ваш токен от BotFather
 API_TOKEN = "7346569102:AAEh4S1kwJOVn6HAN25XuSlIWYz9YxlPUUk"
@@ -7,6 +9,14 @@ CHANNEL_USERNAME = "kussokofficial"  # Имя пользователя ваше�
 FILM_LINK = "https://t.me/+RTSVbES7UdQ5NzBi"  # Ссылка на фильм или сериал
 
 bot = telebot.TeleBot(API_TOKEN)
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Бот работает!"
+
+def run():
+    app.run(host='0.0.0.0', port=8080)
 
 # Команда /start
 @bot.message_handler(commands=['start'])
@@ -81,7 +91,8 @@ def check_subscription(call):
 # Удаляем активный Webhook перед запуском polling
 bot.remove_webhook()
 
-# Запуск бота
 if __name__ == "__main__":
+    # Запускаем Flask-сервер в фоновом режиме
+    Thread(target=run).start()
     print("Бот запущен...")
     bot.infinity_polling()
